@@ -1,2 +1,3 @@
 # psscrips
-Misc. Powershell scrips
+This is a collection of miscellaneous powershell scripts
+
