@@ -31,3 +31,5 @@ function InstallFirefox {
         Remove-Item $Installer;   
     }
 }
+
+#this should updat eon githubd3d3dedwdww
