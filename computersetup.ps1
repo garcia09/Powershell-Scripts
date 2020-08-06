@@ -36,4 +36,4 @@ function InstallFirefox {
 
 #Third try
 
-#outside setup
+#outside setup as
