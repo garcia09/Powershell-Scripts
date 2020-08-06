@@ -35,3 +35,5 @@ function InstallFirefox {
 #this should updat eon githubd3d3dedwdwwdecece
 
 #Third try
+
+#outside setup
