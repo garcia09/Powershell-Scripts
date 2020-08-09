@@ -1,9 +1,17 @@
 <#Diego Garcia
-Created on 8/4/20
-This script is to be used when initially setting up a Windows computer. 
+#Created on 8/4/20
+#This script is to be used when initially setting up a Windows computer. 
+
+# Variables used:
+# $user = name of computer's user (computer name)
+# $ChromeInstaller = location where chrome intaller will be placed
+# $LocalTempDir= directory where chrome files will be at
+# Process2Monitor =displays process of
+# $FirefoxInstaller = Location where firefox installer is placed
+
 #>
 
-$user = -Read-Host -Prompt 'Enter Computer Users name: ' # Gets users name
+$user = -Read-Host -Prompt 'Enter Computer Users name & computer Number: ' # Gets users name
 
 <#he Following Runs Windows Update#> 
 function WinUpdate {
@@ -18,7 +26,7 @@ function Kranzsetup {
     param ()
 
     process{<#Renames computer#>
-        Rename-Computer -NewName "Kranz "$user
+        Rename-Computer -NewName "Kranz " + $user
         #Joins Kranzassoc.com domain
         Add-Computer -DomainName <#Enter Domain#> -Credential AD\adminuser #unsure about "AD\adminuser" different credential woul be used
         -restart -force #Restart computer
@@ -47,19 +55,20 @@ function InstallChrome {
 }
 
     # Silent Install Firefox 
-function IntallFirefox {
+
+    function IntallFirefox {
     param ()
-$workdir = "c:\installer\"  # Path for the workdir
+    $FirefoxInstaller = "c:\installer\"  # Path for the FirefoxInstaller$FirefoxInstaller
 
 # Check if work directory exists if not it will create it
-If (Test-Path -Path $workdir -PathType Container)
-{ Write-Host "$workdir already exists" -ForegroundColor Red}
+If (Test-Path -Path $FirefoxInstaller -PathType Container)
+{ Write-Host "$FirefoxInstaller already exists" -ForegroundColor Red}
 ELSE
-{ New-Item -Path $workdir  -ItemType directory }
+{ New-Item -Path $FirefoxInstaller  -ItemType directory }
 
 # Downloads the installer
 $source = "https://download.mozilla.org/?product=firefox-51.0.1-SSL&os=win64&lang=en-US"
-$destination = "$workdir\firefox.exe"
+$destination = "$FirefoxInstaller\firefox.exe"
 
 # Check if Invoke-Webrequest exists otherwise execute WebClient
 if (Get-Command 'Invoke-Webrequest')
@@ -72,13 +81,13 @@ else
     $webclient.DownloadFile($source, $destination)
 }
 # Starts the installation
-Start-Process -FilePath "$workdir\firefox.exe" -ArgumentList "/S"
+Start-Process -FilePath "$FirefoxInstaller\firefox.exe" -ArgumentList "/S"
 
 # Wait for the installation to finish
 Start-Sleep -s 240
 
 # Remove the installer
-Remove-Item -Force $workdir\firefox*    
+Remove-Item -Force $FirefoxInstaller\firefox*    
 }
 
 
