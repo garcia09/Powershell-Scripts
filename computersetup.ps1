@@ -11,10 +11,10 @@
 
 #>
 
-$user = -Read-Host -Prompt 'Enter Computer Users name & computer Number: ' # Gets users name
 
 <#he Following Runs Windows Update#> 
 function WinUpdate {
+
     param ()
     Install-Module PSWindowsUpdate  #install the Windows Update module in PowerShell.
     Get-WindowsUpdate   #Checks for updates
@@ -26,10 +26,15 @@ function Kranzsetup {
     param ()
 
     process{<#Renames computer#>
-        Rename-Computer -NewName "Kranz " + $user
+        -prompt 'Enter Computer Computer Number and user name:
+                 Example: Kranz-LT-###-Username'
+        $user = -Read-Host   # Gets users name
+        Rename-Computer -NewName $user
         #Joins Kranzassoc.com domain
+
         Add-Computer -DomainName <#Enter Domain#> -Credential AD\adminuser #unsure about "AD\adminuser" different credential woul be used
-        -restart -force #Restart computer
+        
+
     }
    
 
@@ -38,6 +43,8 @@ function Kranzsetup {
 function InstallChrome {
     param ()
     process{
+
+        -prompt "Installing Google Chrome...."
         $LocalTempDir = $env:TEMP; 
         $ChromeInstaller = "ChromeInstaller.exe";
         (new-object    System.Net.WebClient).DownloadFile('http://dl.google.com/chrome/install/375.126/chrome_installer.exe', "$LocalTempDir\$ChromeInstaller"); 
@@ -51,6 +58,8 @@ function InstallChrome {
                 } 
             } 
             Until (!$ProcessesFound)
+
+            -prompt "Google Chrome is installed"
     }
 }
 
@@ -58,13 +67,16 @@ function InstallChrome {
 
     function IntallFirefox {
     param ()
-    $FirefoxInstaller = "c:\installer\"  # Path for the FirefoxInstaller$FirefoxInstaller
+
+    -prompt "Installing Firefox..."
+
+    $FirefoxInstaller = $env:TEMP  # Path for the FirefoxInstaller
 
 # Check if work directory exists if not it will create it
-If (Test-Path -Path $FirefoxInstaller -PathType Container)
-{ Write-Host "$FirefoxInstaller already exists" -ForegroundColor Red}
-ELSE
-{ New-Item -Path $FirefoxInstaller  -ItemType directory }
+#If (Test-Path -Path $FirefoxInstaller -PathType Container)
+#{ Write-Host "$FirefoxInstaller already exists" -ForegroundColor Red}
+#ELSE
+#{ New-Item -Path $FirefoxInstaller  -ItemType directory }
 
 # Downloads the installer
 $source = "https://download.mozilla.org/?product=firefox-51.0.1-SSL&os=win64&lang=en-US"
@@ -88,21 +100,25 @@ Start-Sleep -s 240
 
 # Remove the installer
 Remove-Item -Force $FirefoxInstaller\firefox*    
+
+
+-prompt "Firefox is installed"
 }
 
 
 # Install Adobe Reader DC
 function InstallAcrobat {
     param ()
-
+-prompt "Checking is Acrobat is Already Installed... "
 
 # Check if Software is installed already in registry.
 $CheckADCReg = Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object {$_.DisplayName -like "Adobe Acrobat Reader DC*"}
 # If Adobe Reader is not installed continue with script. If it's istalled already script will exit.
 If ($null -eq $CheckADCReg) {
 
+-prompt "Installing Acrobat Reader DC"
 # Path for the temporary downloadfolder. Script will run as system so no issues here
-$Installdir = "c:\temp\install_adobe"
+$Installdir = $env:TEMP + "\install_adobe"
 New-Item -Path $Installdir  -ItemType directory
 
 # Download the installer from the Adobe website.
@@ -118,6 +134,17 @@ Start-Sleep -s 240
 
 # Finish by cleaning up the download. 
 Remove-Item -Force $Installdir\AcroRdrDC*
+
+    -prompt "Acrobat Reader DC is installed"
+    }
+    else
+    {
+        -prompt "Acrobat Reader is already installed"
+        return
     }
     
 }
+
+
+-restart -force #Restart computer
+
