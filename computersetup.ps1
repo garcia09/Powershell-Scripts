@@ -27,7 +27,7 @@ function Kranzsetup {
 
     process{<#Renames computer#>
         -prompt 'Enter Computer Computer Number and user name:
-                 Example: Kranz-LT-###-Username'
+                 Example: #-###-Username'
         $user = -Read-Host   # Gets users name
         Rename-Computer -NewName $user
         #Joins Kranzassoc.com domain
